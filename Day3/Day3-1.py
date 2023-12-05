@@ -16,7 +16,7 @@ for y, line in enumerate(Lines):
                     or Lines[y+1][x-1] in specialChars or Lines[y+1][x] in specialChars or Lines[y+1][x+1] in specialChars):
                     isValid = True
             except IndexError:
-                print("test")        
+                False == False        
         else:
             if tempNumber != "":
                 if isValid:
