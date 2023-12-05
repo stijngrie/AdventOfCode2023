@@ -1,9 +1,12 @@
 file1 = open('Day4/Day4-Input.txt', 'r')
 Lines = file1.readlines()
 
-answer = 0
+cards = dict()
 
-for line in Lines:
+for index, line in enumerate(Lines):
+    cards[index+1] = line
+
+for index, line in enumerate(Lines):
     winningNumbers = line.replace("\n", "").split(":")[1].split("|")[0].split(" ")
     winningNumbers = list(filter(lambda x: x != '', winningNumbers))
     scratchNumbers = line.replace("\n", "").split(":")[1].split("|")[1].split(" ")
@@ -12,9 +15,10 @@ for line in Lines:
     winAmount = 0
     for number in scratchNumbers:
         if number in winningNumbers:
-            if winAmount == 0:
-                winAmount += 1
-            else:
-                winAmount *= 2
-    answer += winAmount
-print(answer)
+            winAmount += 1
+
+    cardNumber = int(line.split(":")[0].replace("Card ", ""))
+
+    for number in range(1, winAmount+1):
+        Lines.append(cards[cardNumber + number])
+print(len(Lines))
