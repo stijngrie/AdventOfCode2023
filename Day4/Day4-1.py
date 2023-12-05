@@ -1,4 +1,4 @@
-file1 = open('Day4/Day4-InputT.txt', 'r')
+file1 = open('Day4/Day4-InputTEST.txt', 'r')
 Lines = file1.readlines()
 
 answer = 0
