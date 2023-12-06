@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-file1 = open('Day5/Day5-Input.txt', 'r')
+file1 = open('Day5/Day5-InputT.txt', 'r')
 Lines = file1.readlines()
 
 @dataclass
@@ -74,4 +74,9 @@ locations = []
 for seed in seeds:
     locations.append(Translate(Translate(Translate(Translate(Translate(Translate(Translate(int(seed), seedToSoilD), soilToFertilizerD), fertilizerToWaterD), waterToLightD), lightToTempD), tempToHumidD), humidToLocationD))
 locations.sort()
-print(locations[0])
+
+print(Translate(Translate(Translate(55, seedToSoilD), soilToFertilizerD), fertilizerToWaterD))
+print(Translate(Translate(Translate(67, seedToSoilD), soilToFertilizerD), fertilizerToWaterD))
+
+
+# print(locations[0])

@@ -1,4 +1,8 @@
 from dataclasses import dataclass
+import math
+import time
+
+startTime = time.time()
 
 file1 = open('Day5/Day5-Input.txt', 'r')
 Lines = file1.readlines()
@@ -10,9 +14,9 @@ class Map:
     range: int
     
 @dataclass
-class Seed:
+class Ranges:
     start: int
-    range: int
+    end: int
 
 seeds = []
 seedNums = []
@@ -25,6 +29,47 @@ tempToHumidD = []
 humidToLocationD = []
 
 mode = 0
+
+def convertRange(rangeA, maps: []):
+    newRanges = []
+    rangeConverted = False
+    for map in maps:
+        if rangeA.start >= map.sourceStart and rangeA.end <= map.sourceStart + map.range - 1:
+            newRanges.append(Ranges(rangeA.start - map.sourceStart + map.destinationStart, rangeA.end - map.sourceStart + map.destinationStart))
+            rangeConverted = True
+        elif rangeA.start < map.sourceStart and rangeA.end > map.sourceStart + map.range - 1:
+            # Before range
+            newRanges = newRanges + convertRange(Ranges(rangeA.start, map.sourceStart - 1), maps)
+            # Middle range
+            newRanges.append(Ranges(map.destinationStart, map.destinationStart + map.range - 1))
+            # End range
+            newRanges = newRanges + convertRange(Ranges(map.sourceStart + map.range, rangeA.end), maps)
+            rangeConverted = True
+        elif rangeA.start < map.sourceStart and (rangeA.end >= map.sourceStart and rangeA.end <= map.sourceStart + map.range - 1):
+            # Before range
+            newRanges = newRanges + convertRange(Ranges(rangeA.start, map.sourceStart - 1), maps)
+            # Between range
+            newRanges.append(Ranges(map.destinationStart, rangeA.end - map.sourceStart + map.destinationStart))
+            rangeConverted = True
+        elif rangeA.end > map.sourceStart + map.range - 1 and (rangeA.start >= map.sourceStart and rangeA.start <= map.sourceStart + map.range - 1):
+            # Between range
+            newRanges.append(Ranges(rangeA.start - map.sourceStart + map.destinationStart, map.destinationStart + map.range - 1))
+            # End range
+            newRanges = newRanges + convertRange(Ranges(map.sourceStart + map.range, rangeA.end), maps)
+            rangeConverted = True
+    if rangeConverted == False:
+        newRanges.append(rangeA)
+    return newRanges
+
+def Translate(ranges: [], maps: []):
+    newRanges = []
+    for rangeA in ranges:
+        for r in convertRange(rangeA, maps):
+            if r not in newRanges:
+                newRanges.append(r)
+    return newRanges
+
+
 
 for line in Lines:
     line = line.replace("\n", "")
@@ -69,28 +114,25 @@ for line in Lines:
             tempToHumidD.append(tempMap)
         elif mode == humidToLocationD:
             humidToLocationD.append(tempMap)
-    
-    def Translate(source: int, maps: []):
-        for map in maps:
-            if source >= map.sourceStart and source < map.sourceStart + map.range:
-                return source - map.sourceStart + map.destinationStart
-        return source
 
 start = 1
 seed = ""
 for num in seedNums:
     if start == 1:
-        seed = Seed(num, 0)
+        seed = Ranges(int(num), 0)
         start *= -1
     elif start == -1:
-        seed.range = num
+        seed.end = int(seed.start) + (int(num)-1)
         seeds.append(seed)
         start *= -1
         seed = ""
 
-locations = []     
-for seed in seeds:
-    for number in range(0, int(seed.range)):
-        locations.append(Translate(Translate(Translate(Translate(Translate(Translate(Translate(int(seed.start) + int(number), seedToSoilD), soilToFertilizerD), fertilizerToWaterD), waterToLightD), lightToTempD), tempToHumidD), humidToLocationD))
-locations.sort()
-print(locations[0])
+answers = Translate(Translate(Translate(Translate(Translate(Translate(Translate(seeds, seedToSoilD), soilToFertilizerD), fertilizerToWaterD), waterToLightD), lightToTempD), tempToHumidD), humidToLocationD)
+answer = math.inf
+for test in answers:
+    if test.start < answer:
+        answer = test.start
+print(answer)
+
+endTime = time.time()
+print("Elapsed time: ", round((endTime - startTime) * 1000, 1), "ms")
