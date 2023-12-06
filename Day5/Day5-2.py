@@ -135,4 +135,5 @@ for test in answers:
 print(answer)
 
 endTime = time.time()
+# Benchmark 19.9ms
 print("Elapsed time: ", round((endTime - startTime) * 1000, 1), "ms")
