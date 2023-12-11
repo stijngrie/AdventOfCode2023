@@ -15,8 +15,6 @@ for line in Lines:
             handStrength[strength] = count
     handStrengths[line.replace("\n", "")] = handStrength
 
-
-
 fiveOAK = [] # 1
 fourOAK = [] # 2
 fullHouse = [] # 2
